@@ -19,7 +19,7 @@ jobs:
       - name: Install packages on EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_IP_PUBLICA }}
+          host: ${{ secrets.EC2_IP_PUBLICO }}
           username: ec2-user 
           key: ${{ secrets.PEM_AWS }}
           script: |
@@ -31,3 +31,16 @@ jobs:
             sudo npm install -g express pm2
             sudo pm2 start app.js
             sudo pm2 status
+            
+      - name: Check Status
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_IP_PUBLICO }}
+          username: ec2-user
+          key: ${{ secrets.PEM_AWS }}
+          script: |
+            if pm2 list | grep -q 'app'; then
+            echo "La aplicación está corriendo."
+            else
+            echo "La aplicación no está corriendo."
+            fi
