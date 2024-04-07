@@ -16,6 +16,16 @@ jobs:
       - name: Install SSH
         run: sudo apt-get install openssh-client
       
+      - name: Install nvm
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+      
+      - name: Install latest Node.js
+        run: nvm install node
+      
       - name: Install packages on EC2
         uses: appleboy/ssh-action@master
         with:
@@ -23,7 +33,7 @@ jobs:
           username: ec2-user 
           key: ${{ secrets.PEM_AWS }}
           script: |
-            sudo yum install -y nodejs npm git
+            sudo yum install -y git
             sudo mkdir -p /home/ec2-user
             sudo rm -rf dirwork
             sudo git clone https://${{ secrets.PAT }}@github.com/SAmbricca/DevOps-T2 /home/ec2-user
