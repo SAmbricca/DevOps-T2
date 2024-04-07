@@ -14,17 +14,15 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Install SSH
-        run: sudo apt-get install openssh-client
+        run: sudo apt-get install openssh-client -y
       
-      - name: Install nvm
+      - name: Install nvm and Node.js
         run: |
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-      
-      - name: Install latest Node.js
-        run: nvm install node
+          nvm install node
       
       - name: Install packages on EC2
         uses: appleboy/ssh-action@master
@@ -34,10 +32,9 @@ jobs:
           key: ${{ secrets.PEM_AWS }}
           script: |
             sudo yum install -y git
-            sudo mkdir -p /home/ec2-user
-            sudo rm -rf dirwork
+            sudo rm -rf /home/ec2-user/*
             sudo git clone https://${{ secrets.PAT }}@github.com/SAmbricca/DevOps-T2 /home/ec2-user
             cd /home/ec2-user
-            sudo npm install -g express pm2
-            sudo pm2 start app.js
-            sudo pm2 status
+            npm install express pm2
+            pm2 start app.js
+            pm2 status
