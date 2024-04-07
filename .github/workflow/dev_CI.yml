@@ -19,9 +19,9 @@ jobs:
       - name: Install packages on EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.EC2_IP_PUBLICA }}
           username: ec2-user 
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.PEM_AWS }}
           script: |
             sudo yum install -y nodejs npm git
             sudo mkdir -p /home/ec2-user
