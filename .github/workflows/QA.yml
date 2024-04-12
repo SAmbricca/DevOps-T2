@@ -19,6 +19,6 @@ jobs:
         with:
           host: ${{ env.REMOTE_HOST }}
           username: ${{ env.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.ASIA47CRXPJSNQTZCQHV }}
           script: |
             sudo rm -rf /opt/montoto || true
