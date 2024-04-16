@@ -1,24 +1,42 @@
-name: Remover Directorio
+name: QA_CI
+
 on:
-  push:
-    branches:
-      - proveedores
-env:
-  SSH_PRIVATE_KEY: ${{ secrets.PEM_AWS_QA }}
-  REMOTE_USER: ec2-user
-  REMOTE_HOST: ${{ secrets.EC2_IP_QA_PUBLICO }}
-  APP_NAME: app.js
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy to environment'
+        required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Create directory
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ env.REMOTE_HOST }}
-          username: ${{ env.REMOTE_USER }}
-          key: ./key.pem
-          script: |
-            sudo rm -rf /opt/montoto || true
+    - name: Install Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        sudo apt-get update
+        sudo apt-get install docker-ce -y
+        sudo usermod -aG docker $USER
+
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: |
+        docker build -t santiagoambricca/ORG_PROVEEDORES_QA:latest .
+        docker login -u santiagoambricca -p ${{ secrets.TOKEN_DOCKERHUB }}
+        docker push santiagoambricca/ORG_PROVEEDORES_QA:latest
+
+    - name: SSH into EC2 instance and deploy
+      if: github.event.inputs.deploy == 'true'
+      run: |
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@44.206.233.112 "docker pull santiagoambricca/ORG_PROVEEDORES_QA:latest && docker run -d -p 80:80 santiagoambricca/ORG_PROVEEDORES_QA:latest"
+
+    - name: Verify service is running
+      if: github.event.inputs.deploy == 'true'
+      run: |
+        curl http://44.206.233.112
