@@ -5,7 +5,7 @@ on:
     inputs:
       deploy:
         description: 'Deploy to environment'
-        required: false
+        required: true
 
 jobs:
   build:
@@ -27,14 +27,14 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t santiagoambricca/ORG_PROVEEDORES_QA:latest .
+        docker build -t santiagoambricca/org_proveedores_qa:latest .
         docker login -u santiagoambricca -p ${{ secrets.TOKEN_DOCKERHUB }}
-        docker push santiagoambricca/ORG_PROVEEDORES_QA:latest
+        docker push santiagoambricca/org_proveedores_qa:latest
 
     - name: SSH into EC2 instance and deploy
       if: github.event.inputs.deploy == 'true'
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@44.206.233.112 "docker pull santiagoambricca/ORG_PROVEEDORES_QA:latest && docker run -d -p 80:80 santiagoambricca/ORG_PROVEEDORES_QA:latest"
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@44.206.233.112 "docker pull santiagoambricca/org_proveedores_qa:latest && docker run -d -p 80:80 santiagoambricca/org_proveedores_qa:latest"
 
     - name: Verify service is running
       if: github.event.inputs.deploy == 'true'
