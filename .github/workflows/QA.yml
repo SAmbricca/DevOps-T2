@@ -27,7 +27,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t santiagoambricca/org_proveedores_qa:latest .
+        docker build -t santiagoambricca/org_proveedores_qa:latest ./docker
         docker login -u santiagoambricca -p ${{ secrets.TOKEN_DOCKERHUB }}
         docker push santiagoambricca/org_proveedores_qa:latest
 
