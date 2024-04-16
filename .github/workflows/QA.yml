@@ -28,7 +28,7 @@ jobs:
     - name: Build Docker image
       run: |
         docker login -u santiagoambricca -p ${{ secrets.TOKEN_DOCKERHUB }}
-        docker build -t santiagoambricca/org_proveedores_qa:latest ./docker
+        docker build -t santiagoambricca/org_proveedores_qa:latest .
         docker push santiagoambricca/org_proveedores_qa:latest
 
     - name: SSH into EC2 instance and deploy
