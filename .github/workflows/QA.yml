@@ -1,4 +1,4 @@
-name: QA_CI
+name: PROVEEDORES_QA_CI
 
 on:
   workflow_dispatch:
