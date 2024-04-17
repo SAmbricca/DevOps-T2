@@ -5,7 +5,6 @@ on:
     inputs:
       deploy:
         description: 'Deploy to environment'
-        required: false
 
 jobs:
   build:
