@@ -31,12 +31,10 @@ jobs:
         docker push santiagoambricca/devops-t2-proveedores:latest
 
     - name: SSH into EC2 instance and deploy
-      if: github.event.inputs.deploy == 'true'
       run: |
         ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@44.206.233.112 "docker stop \$(docker ps -aq) && docker rm \$(docker ps -aq); docker pull santiagoambricca/devops-t2-proveedores:latest && docker run -d -p 80:80 santiagoambricca/devops-t2-proveedores:latest"
 
     - name: Verify service is running
-      if: github.event.inputs.deploy == 'true'
       run: |
         curl http://44.206.233.112
 
